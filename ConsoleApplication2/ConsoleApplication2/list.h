@@ -3,23 +3,13 @@
 #include <string>
 using namespace std;
 
-
-class elements {
-private:
-	string data;
-	elements *next;
-public:
-	elements();
-	friend class list;
-};
-
 class list {
 private:
-	elements *e;
+	string info;
+	list *next;
 public:
 	list();
-	~list();
 	void add(int i, string data);
-	string get(int i);
+	void get(int i);
 	void del(int i);
 };
