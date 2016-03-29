@@ -16,7 +16,7 @@ void list::add(int i, string data) {
 
 	if (i == 0)
 	{
-		this->info = data;
+		this->info = data;  //дерьмо
 	}
 	else
 	{
