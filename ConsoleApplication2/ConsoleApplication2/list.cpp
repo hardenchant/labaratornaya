@@ -12,11 +12,28 @@ list::list()
 	info = "";
 }
 
-void list::add(int i, string data) {
+void list::dellist() 
+{
+	list *temp, *temp2;
+	temp2 = nullptr;
+	temp = this;
+	while (this->next != nullptr)
+	{
+		while (temp->next != nullptr)
+		{
+			temp2 = temp;
+			temp = temp->next;
+		}
+		delete temp;
+		temp2->next = nullptr;
+	}
+}
 
+void list::add(int i, string data) 
+{
 	if (i == 0)
 	{
-		this->info = data;  //дерьмо
+		this->info = data;
 	}
 	else
 	{
@@ -72,9 +89,7 @@ void list::del(int i)
 	}
 	if (i = 0)   //удаление со сдвигом т.е. был 5 элемент = 10, при удалении 3 элемента, 4 элемент = 10
 	{			 //а 5 больше не существует
-		pp = p;
-		p = p->next;
-		delete pp;
+		p->info = "";
 	}
 	else
 	{

@@ -12,4 +12,5 @@ public:
 	void add(int i, string data);
 	void get(int i);
 	void del(int i);
+	void dellist();
 };
