@@ -1,1 +1,1 @@
-# labaratornaya
+# LABS FOR TIMP AND ALG-LANG
