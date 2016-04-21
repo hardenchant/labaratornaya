@@ -10,12 +10,14 @@ using namespace std;
 class rational {
 private:
 	int m;
-	int n;
+	int n; // unsigned maybe?
 public:
-	void print();
+	void print();  // const?
 	rational(int m, int n);
 	rational();
-	const rational operator+(const rational& r);
+	// правильное объявление коснтантного метода: rational operator+(const rational& r) const;
+	// а этот метод возвращает константный временный объект
+	const rational operator+(const rational& r); // так возвращается константный объект
 	const rational operator*(const rational& r); //умножение на рац дробь
 	const rational operator*(int lambda); //умножение на число
 };
@@ -24,11 +26,11 @@ class matrix {
 private:
 	rational **mat;
 public:
-	int m; //stroki
+	int m; //stroki // uint
 	int n; //stolbci
 	matrix(int m, int n);	//конструктор заполнения матрицы рандомными рац числами
 							//рандом ограничен 10 потому что иначе переполняется int при умножении матриц 
-	const matrix operator*(const matrix& mat);  //умножение матриц
+	const matrix operator*(const matrix& mat);  //умножение матриц // const method, not const rv
 	const matrix operator+(const matrix& mat); //plus
 	const rational get(int m, int n);
 	void print(); //вывод матрицы
@@ -36,9 +38,10 @@ public:
 	
 };
 
-matrix::matrix(int m, int n) //m-stroki n-stolbiki 
+// предлагаю использовать имена параметров метода отличными от имен членов класса
+matrix::matrix(int m, int n) //m-stroki n-stolbiki
 {
-	this->m = m;
+	this->m = m; // initializator list
 	this->n = n;
 	
 	mat = new rational*[m];
@@ -55,6 +58,8 @@ matrix::matrix(int m, int n) //m-stroki n-stolbiki
 const matrix matrix::operator*(const matrix& mat)
 {
 	matrix temp = matrix(m, mat.n); // создаем пустую матрицу
+
+	//зачем здесь лишняя инициализация? 
 	rational temprat = rational(0, 1); // 1 потому что рац дробь в конструкторе сокращается а на 0 делить нельзя
 	for (int i = 0; i < m; i++)
 	{
@@ -84,7 +89,7 @@ const matrix matrix::operator+(const matrix& mat)
 	return temp;
 }
 
-const rational matrix::get(int m, int n)
+const rational matrix::get(int m, int n) // operator()
 {
 	rational temp = mat[m-1][n-1];
 	return temp;
@@ -103,7 +108,7 @@ const matrix matrix::rotate()
 	return temp;
 }
 
-void matrix::print() {
+void matrix::print() { // operator <<
 	for (int i = 0; i < m; i++)
 	{
 		for (int j = 0; j < n; j++)
@@ -115,7 +120,7 @@ void matrix::print() {
 	}
 }
 
-void rational::print()
+void rational::print() // operator <<
 {
 	std::cout << m << "/" << n;
 }
@@ -143,7 +148,7 @@ rational::rational(int m, int n) {
 }
 const rational rational::operator*(const rational& r) {
 	rational temp = rational(m*r.m, n*r.n);
-	return (temp);
+	return (temp); // зачем скобки?
 }
 
 const rational rational::operator*(int lambda) {
@@ -155,7 +160,7 @@ const rational rational::operator+(const rational& r) {
 	int a = n; // 1 znamenatel
 	int b = r.n; // 2 znamenatel
 	int nod;
-	while (a != 0 && b != 0)
+	while (a != 0 && b != 0) // в конструкторе же сократится
 	{
 		if (a > b)
 		{
@@ -191,7 +196,7 @@ int main()
 	{
 	
 	matrix mrrr3 = mrrr+mrrr2;
-	if (mrrr.m != mrrr2.m || mrrr.n != mrrr2.n) throw mrrr3;
+	if (mrrr.m != mrrr2.m || mrrr.n != mrrr2.n) throw mrrr3; // эту проверку должно выполнять сложение
 	cout << "addition:" << endl;
 	mrrr3.print();
 
@@ -213,7 +218,7 @@ int main()
 	std::cout << std::endl;
 	
 	mrrr3 = mrrr * mrrr2;
-	if (mrrr.m != mrrr2.m || mrrr.n != mrrr2.n) throw mrrr3;
+	if (mrrr.m != mrrr2.m || mrrr.n != mrrr2.n) throw mrrr3; // зачем это тут?
 	cout << "Multiply:" << endl;
 	mrrr3.print();
 
@@ -224,10 +229,11 @@ int main()
 	r.print();*/
 	
 	}
-	catch (matrix mat)
+	// исключения принято принимать по константной ссылке, чтобы не было копирования
+	catch (matrix mat) // использовать матрицу в качестве объекта-исключения -- не лучшая идея
 	{
 		std::cout << "Error in matrix row or column!"<< std::endl;
-		return 0;
+		return 0; // при ошибке возвращают не 0
 	}
 
 	system("pause");
