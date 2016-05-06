@@ -9,26 +9,44 @@
 
 using namespace std;
 
-class folder {
+class user {
 public:
 	string name;
-	string pref;
-	folder *parrent;
-	vector<folder*> inner;
+	bool rootaccess;
+	user(string name);
+	void getroot();
+};
+user::user(string name) {
+	this->name = name;
+	rootaccess = 0;
+}
+void user::getroot() {
+	rootaccess = 1;
+}
+
+class folder {
+public:
+	user *userparrent; //parrent user
+
+	string name; //name
+	string pref; //extension
+	folder *parrent; //parrent folder
+	vector<folder*> inner; 
 	folder();
 	~folder();
-	void list();
-	void mkdir(string name);
+	void list(); //show inner
+	void mkdir(string name); //make folder
 };
 
-folder::folder() {
+folder::folder() //for root-folder only?
+{ 
 	pref = "";
 	parrent = nullptr;
-}
+} 
 folder::~folder() {
 	for (int i = 0; i < inner.size(); i++)
 	{
-		delete &inner[i];
+		delete &inner[i-1];
 	}
 }
 void folder::list() {
@@ -48,7 +66,6 @@ folder* cd(folder *f, string name) {
 	{
 		if (f->inner[i]->name == name && f->inner[i]->pref == "")
 		{
-			cout << "hui" << endl;
 			return (f->inner[i]);
 		}
 	}
@@ -56,10 +73,10 @@ folder* cd(folder *f, string name) {
 
 class file : public folder {
 public:
+	bool readonly;
 	string data;
 	file();
 };
-
 file::file() {
 	pref = ".f";
 }
@@ -69,17 +86,6 @@ int main()
 	folder *root = new folder();
 	
 	//×ÒÎ ÒÎ ÍÅ ÒÀÊ Ñ ÕÎÇßÅÂÀÌÈ ÏÀÏÎÊ, ÄÎÄÅËÀÒÜ, ÂÛÄÀÅÒ ÎØÈÁÊÓ ËÈÑÒ ÍÀ ÐÓÒ
-
-	root->mkdir("123");
-	root->mkdir("ggg");
-	cd(root, "ggg");
-	root->mkdir("test");
-	cd(root, "test");
-	folder *temp = root;
-	root->list();
-	//root->inner._Pop_back_n(3);
-	
-	
 	
 	string temple;
 	string command;
