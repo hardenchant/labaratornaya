@@ -8,26 +8,10 @@
 using namespace std;
 
 
-//folder* cd(folder *f, string name) //subsidiary method for cd, searching and return (tipa dopilit' i poisk)
-//{
-//	for (int i = 0; i < f->inner.size(); i++)
-//	{
-//		if (f->inner[i]->name == name && f->inner[i]->pref == "")
-//		{
-//			return (f->inner[i]);
-//		}
-//	}
-//}
-//folder* back(folder *f) {
-//	return (f->parrent);
-//}
-
-
-
 ostream& operator<<(ostream& os, const folder* ff) //subsidiary method for out-info
 {
-	os << "Name: " << ff->name << " Pref: " << ff->pref << " Parrent: " << ff->parrent->name << endl;
-	if (ff->pref != "")
+	os << "Name: " << ff->name.name << " Pref: " << ff->name.pref<< " Parrent: " << ff->parrent->name.name << endl;
+	if (ff->name.pref != "")
 	{
 		file* temp;
 		temp = (file*)ff;
@@ -40,7 +24,7 @@ int main()
 {
 
 	folder *root = new folder();
-	root->name = "root";
+	root->name.name = "root";
 
 	//test
 	root->mkdir("123");
@@ -54,7 +38,6 @@ int main()
 	cout << root->inner[0]->inner[0];
 	//test
 	cout << root->inner[0];
-	//×ÒÎ ÒÎ ÍÅ ÒÀÊ Ñ ÕÎÇßÅÂÀÌÈ ÏÀÏÎÊ, ÄÎÄÅËÀÒÜ, ÂÛÄÀÅÒ ÎØÈÁÊÓ ËÈÑÒ ÍÀ ĞÓÒ
 	
 	string temple;
 	string command;
