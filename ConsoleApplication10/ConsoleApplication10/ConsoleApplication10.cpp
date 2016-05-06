@@ -2,66 +2,14 @@
 //
 
 #include "stdafx.h"
-#include <string>
-#include <iostream>
-#include <vector>
-#include <memory>
+#include "folder.h"
+#include "file.h"
 
 using namespace std;
 
-class user {
-public:
-	string name;
-	bool rootaccess;
-	user(string name);
-	void getroot();
-};
-user::user(string name) {
-	this->name = name;
-	rootaccess = 0;
-}
-void user::getroot() {
-	rootaccess = 1;
-}
 
-class folder {
-public:
-	user *userparrent; //parrent user
-
-	string name; //name
-	string pref; //extension
-	folder *parrent; //parrent folder
-	vector<folder*> inner; 
-	folder();
-	~folder();
-	void list(); //show inner
-	void mkdir(string name); //make folder
-};
-
-folder::folder() //for root-folder only?
-{ 
-	pref = "";
-	parrent = nullptr;
-} 
-folder::~folder() {
-	for (int i = 0; i < inner.size(); i++)
-	{
-		delete &inner[i-1];
-	}
-}
-void folder::list() {
-	for (int i = 0; i < inner.size(); i++)
-	{
-		cout << "|" << inner[i]->name << inner[i]->pref << endl;
-	}
-}
-void folder::mkdir(string name) {
-	folder *temp = new folder();
-	temp->name = name;
-	temp->parrent = this;
-	inner.push_back(temp);
-}
-folder* cd(folder *f, string name) {
+folder* cd(folder *f, string name) //subsidiary method for cd, searching and return (tipa dopilit' i poisk)
+{
 	for (int i = 0; i < f->inner.size(); i++)
 	{
 		if (f->inner[i]->name == name && f->inner[i]->pref == "")
@@ -71,20 +19,37 @@ folder* cd(folder *f, string name) {
 	}
 }
 
-class file : public folder {
-public:
-	bool readonly;
-	string data;
-	file();
-};
-file::file() {
-	pref = ".f";
+
+
+ostream& operator<<(ostream& os, const folder* ff) //subsidiary method for out-info
+{
+	os << "Name: " << ff->name << " Pref: " << ff->pref << " Parrent: " << ff->parrent->name << endl;
+	if (ff->pref != "")
+	{
+		file* temp;
+		temp = (file*)ff;
+		os << "Data: "<< temp->data << endl;
+	}
+	return os;
 }
 
 int main()
 {
+
 	folder *root = new folder();
-	
+	root->name = "root";
+
+	//test
+	root->mkdir("123");
+	root->mkdir("folderaa");
+	root->mkdir("folderbb");
+	root->mkdir("foldercc");
+	root->mkdir("999");
+	root = cd(root, "123");
+	root->touch("FirstFile", "Abcsdoasdk");
+	cout << root->inner[0]->inner[0];
+	//test
+	cout << root->inner[0];
 	//×ÒÎ ÒÎ ÍÅ ÒÀÊ Ñ ÕÎÇßÅÂÀÌÈ ÏÀÏÎÊ, ÄÎÄÅËÀÒÜ, ÂÛÄÀÅÒ ÎØÈÁÊÓ ËÈÑÒ ÍÀ ÐÓÒ
 	
 	string temple;
@@ -106,12 +71,15 @@ int main()
 			root->mkdir(command);
 		}
 
-		/*if (temple == "touch")
+		if (temple == "touch")
 		{
-			cin >> command;
-			root.createfile(command);
-		}*/
-		if (temple == "cd..")
+			cin >> command; // name
+			cout << "Please enter the data: "<< endl;
+			string data;
+			getline(cin, data);
+			root->touch(command, data);
+		}
+		if (temple == "cd.." && root->parrent!=nullptr)
 		{
 			root = root->parrent;
 		}
