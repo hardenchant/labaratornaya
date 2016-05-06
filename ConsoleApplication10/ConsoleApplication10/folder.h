@@ -17,5 +17,7 @@ public:
 	void list(); //show inner
 	void mkdir(string name); //make folder
 	void touch(string name, string data); //make file
-	//void del(string name);
+	folder* cd(string name); //return ptr to cd
+	folder* back();
+	void del(string delname);
 };

@@ -8,16 +8,19 @@
 using namespace std;
 
 
-folder* cd(folder *f, string name) //subsidiary method for cd, searching and return (tipa dopilit' i poisk)
-{
-	for (int i = 0; i < f->inner.size(); i++)
-	{
-		if (f->inner[i]->name == name && f->inner[i]->pref == "")
-		{
-			return (f->inner[i]);
-		}
-	}
-}
+//folder* cd(folder *f, string name) //subsidiary method for cd, searching and return (tipa dopilit' i poisk)
+//{
+//	for (int i = 0; i < f->inner.size(); i++)
+//	{
+//		if (f->inner[i]->name == name && f->inner[i]->pref == "")
+//		{
+//			return (f->inner[i]);
+//		}
+//	}
+//}
+//folder* back(folder *f) {
+//	return (f->parrent);
+//}
 
 
 
@@ -45,8 +48,9 @@ int main()
 	root->mkdir("folderbb");
 	root->mkdir("foldercc");
 	root->mkdir("999");
-	root = cd(root, "123");
+	root = root->cd("123");
 	root->touch("FirstFile", "Abcsdoasdk");
+	root = root->back();
 	cout << root->inner[0]->inner[0];
 	//test
 	cout << root->inner[0];
@@ -63,7 +67,7 @@ int main()
 		if (temple == "cd")
 		{
 			cin >> command;
-			root = cd(root, command);
+			root = root->cd(command);
 		}
 		if (temple == "mkdir")
 		{
@@ -81,7 +85,12 @@ int main()
 		}
 		if (temple == "cd.." && root->parrent!=nullptr)
 		{
-			root = root->parrent;
+			root = root->back();
+		}
+		if (temple == "del")
+		{
+			cin >> command;
+			root->del(command);
 		}
 	}
 
