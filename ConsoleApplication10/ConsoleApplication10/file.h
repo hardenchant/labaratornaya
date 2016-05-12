@@ -6,9 +6,14 @@ private:
 	void list();
 	void mkdir(string name);
 	void touch(string name);
+	folder* cd(string name);
+	folder* back();
+	void link(fullname name, string path);
 public:
 	bool readonly;
 	string data;
+	
+
 	file();
 	~file();
 };

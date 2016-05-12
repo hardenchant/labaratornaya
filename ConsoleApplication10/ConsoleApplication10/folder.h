@@ -20,6 +20,7 @@ public:
 	void touch(string name, string data); //make file
 	folder* cd(string name); //return ptr to cd
 	folder* back();
-	void del(fullname delname);
+	void del(string name);
 	void link(fullname name, string path);
+	void open(fullname name);
 };

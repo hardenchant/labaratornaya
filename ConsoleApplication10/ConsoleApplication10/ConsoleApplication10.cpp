@@ -36,8 +36,8 @@ int main()
 	root->touch("FirstFile", "Abcsdoasdk");
 	root = root->back();
 	cout << root->inner[0]->inner[0];
-	//test
 	cout << root->inner[0];
+	//test
 	
 	string temple;
 	string command;
@@ -74,6 +74,17 @@ int main()
 		{
 			cin >> command;
 			root->del(command);
+		}
+		if (temple == "link")
+		{
+			cin >> command;
+			cin >> temple;
+			root->link(command, temple);
+		}
+		if (temple == "open")
+		{
+			cin >> command;
+			root->open(command);
 		}
 	}
 
