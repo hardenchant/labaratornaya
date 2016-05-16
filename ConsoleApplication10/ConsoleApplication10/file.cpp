@@ -16,5 +16,5 @@ file::file() {
 	readonly = 0;
 }
 file::~file() {
-	data = "";
+	//data = "";
 }

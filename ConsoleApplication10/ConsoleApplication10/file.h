@@ -10,7 +10,7 @@ private:
 	folder* back();
 	void link(fullname name, string path);
 public:
-	bool readonly;
+
 	string data;
 	
 

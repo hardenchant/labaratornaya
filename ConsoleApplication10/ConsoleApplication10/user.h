@@ -4,8 +4,12 @@ using namespace std;
 
 class user {
 public:
-	string name;
+	vector<string> users;
+	string loguser;
 	bool rootaccess;
-	user(string name);
+	user();
 	void getroot();
+	void adduser(string name);
+	void login(string name);
+	void logout();
 };

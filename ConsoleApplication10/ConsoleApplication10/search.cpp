@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "search.h"
 
-int search(fullname name, folder *fold) {
+int searchf(fullname name, folder *fold) {
 	
 	for (int i = 0; i < fold->inner.size(); i++)
 	{

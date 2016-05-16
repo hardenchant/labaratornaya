@@ -13,6 +13,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <fstream>
 
 
 // TODO: Установите здесь ссылки на дополнительные заголовки, требующиеся для программы
