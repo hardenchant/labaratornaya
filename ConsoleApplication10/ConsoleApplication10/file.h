@@ -3,17 +3,13 @@
 
 class file : public folder {
 private:
-	void list();
-	void mkdir(string name);
-	void touch(string name);
-	folder* cd(string name);
-	folder* back();
-	void link(fullname name, string path);
+	//cделать заглушки для функций из folder
 public:
 
 	string data;
 	
 
 	file();
+	file(fullname name, bool readonly, string parentuser, int lvlin, string parentfolder, string data);
 	~file();
 };

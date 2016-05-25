@@ -3,6 +3,7 @@
 #include "file.h"
 #include "search.h"
 
+
 using namespace std;
 
 folder::folder() //for root-folder only?
@@ -11,6 +12,14 @@ folder::folder() //for root-folder only?
 	parrent = nullptr;
 	readonly = false;
 	lvlin = 0;
+	parentuser = "root";
+}
+folder::folder(fullname name, bool readonly, string parentuser, int lvlin, string parentfolder) {
+	this->name = name;
+	this->readonly = readonly;
+	this->parentuser = parentuser;
+	this->lvlin = lvlin;
+	this->parentfolder = parentfolder;
 }
 folder::~folder() {
 	for (int i = 0; i < inner.size(); i++)
@@ -37,6 +46,7 @@ void folder::mkdir(string name, string parentuser) {
 		temp->name = name;
 		temp->parrent = this;
 		temp->parentuser = parentuser;
+		temp->parentfolder = this->name.name;
 
 		folder *lvl = temp;					//set the level in
 		int lvlint = 0;

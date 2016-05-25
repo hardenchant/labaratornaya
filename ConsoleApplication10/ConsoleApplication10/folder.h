@@ -11,17 +11,18 @@ public:
 	//string name; //name
 	//string pref; //extension
 	folder *parrent; //parrent folder
+	string parentfolder;
 	vector<folder*> inner;
 	bool readonly;
 	int lvlin; //уровень вложенности
 
 	folder();
-	//folder(string name, bool readonly, folder *parrent)
+	folder(fullname name, bool readonly, string parentuser, int lvlin, string parentfolder); //для восстановления из файла
 	~folder();
 	void list(); //show inner
 	void mkdir(string name, string parentuser); //make folder
 	void touch(string name, string data, string parentuser); //make file
-	folder* cd(string name, string loguser); //return ptr to cd
+	folder* cd(string name, user *us); //return ptr to cd
 	folder* back();
 	void del(fullname name, user *us);
 	void link(fullname name, string path, user *us);
