@@ -110,6 +110,7 @@ folder* folder::back() {
 }
 void folder::del(fullname name, user *us) {
 	int num = searchf(name, this);
+	if (num == -1)return; //if not founded
 	if ((this->inner[num]->parentuser != us->loguser) && (us->rootaccess != true))
 	{
 		cout << "No access!" << endl;
@@ -124,32 +125,14 @@ void folder::del(fullname name, user *us) {
 	this->inner.erase(this->inner.begin() + num);
 }
 void folder::link(fullname name, string path, user *us) {
-	vector<fullname> tempvect;
-	string tempstr = "";
-	fullname *tempfn;
+	vector<fullname> tempvect(parsepath(path));
 	folder *root = this;
-	for (int i = 1; i < path.length(); i++)
-	{
-		if (path[i] == '/')
-		{
-			tempfn = new fullname(tempstr);
-			tempvect.push_back(*tempfn);
-			tempstr = "";
-		}
-		else 
-		{
-			tempstr = tempstr + path[i];
-		}
-	}
-	tempfn = new fullname(tempstr);
-	tempvect.push_back(*tempfn);
-
-	while (root->parrent != nullptr) {
+	while (root->parrent != nullptr) {	//go to root
 		root = root->parrent;
 	}
 
 
-	for (int k = 0; k < tempvect.size(); k++)
+	for (int k = 0; k < tempvect.size(); k++)			//go to path
 	{
 		if (searchf(tempvect[k], root) == -1) return;
 		root = root->inner[searchf(tempvect[k], root)];
@@ -170,6 +153,7 @@ void folder::link(fullname name, string path, user *us) {
 	temp->inner = root->inner;
 	temp->name = name;
 	temp->name.pref = ".link";
+	temp->parentuser = us->loguser;
 	this->inner.push_back(temp);
 
 }
@@ -229,4 +213,10 @@ void folder::readonlyswitch(string name, user *us) {
 		temp->readonly = false;
 		cout << temp->name.name << temp->name.pref << " isn't read-only" << endl;
 	}
+}
+
+void folder::copy(string path_1, string path_2) {
+	vector<fullname> path1(parsepath(path_1));
+	vector<fullname> path2(parsepath(path_2));
+
 }

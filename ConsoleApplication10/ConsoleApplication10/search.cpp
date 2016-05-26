@@ -12,3 +12,25 @@ int searchf(fullname name, folder *fold) {
 	}
 	return -1; //if not founded
 }
+
+vector<fullname> parsepath(string path) {
+	vector<fullname> tempvect;   //path parsing
+	string tempstr = "";
+	fullname *tempfn;
+	for (int i = 1; i < path.length(); i++)
+	{
+		if (path[i] == '/')
+		{
+			tempfn = new fullname(tempstr);
+			tempvect.push_back(*tempfn);
+			tempstr = "";
+		}
+		else
+		{
+			tempstr = tempstr + path[i];
+		}
+	}
+	tempfn = new fullname(tempstr);
+	tempvect.push_back(*tempfn);	//end path parsing
+	return tempvect;
+}

@@ -29,6 +29,7 @@ public:
 	void open(fullname name, user *us);
 	void tree(int tire); // tire only 0!
 	void readonlyswitch(string name, user *us);
+	void copy(string path_1, string path_2);
 
 	
 };
