@@ -12,11 +12,12 @@ public:
 	//string pref; //extension
 	folder *parrent; //parrent folder
 	string parentfolder;
-	vector<folder*> inner;
+	vector<folder*> *inner;
 	bool readonly;
 	int lvlin; //уровень вложенности
 
 	folder();
+	
 	folder(fullname name, bool readonly, string parentuser, int lvlin, string parentfolder); //для восстановления из файла
 	~folder();
 	void list(); //show inner
@@ -29,7 +30,6 @@ public:
 	void open(fullname name, user *us);
 	void tree(int tire); // tire only 0!
 	void readonlyswitch(string name, user *us);
-	void copy(string path_1, string path_2);
+	void copy(string path_1, string path_2, user *us);
 
-	
 };

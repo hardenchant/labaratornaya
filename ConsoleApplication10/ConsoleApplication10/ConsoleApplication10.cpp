@@ -28,9 +28,9 @@ ostream& operator<<(ostream& os, const folder* ff) //ÔÂÂ„ÛÁÍ‡ ‚˚‚Ó‰‡ ‰Îˇ Á‡ÔËÒ
 		file *ftemp = (file*)ff;
 		os << endl << ftemp->data;
 	}
-	for (int i = 0; i < ff->inner.size(); i++)
+	for (int i = 0; i < ff->inner[0].size(); i++)
 	{
-		os << endl << ff->inner[i];
+		os << endl << ff->inner[0][i];
 	}
 
 	return os;
@@ -45,6 +45,9 @@ folder *loadsys(string filename)
 	int lvlin;
 
 	ifstream fin(filename);
+	if (!fin.is_open()) {
+		return nullptr;
+	}
 	while (!fin.eof())
 	{
 		fin >> names;
@@ -67,7 +70,6 @@ folder *loadsys(string filename)
 		}
 	}
 	fin.close();
-	//œ»À»»»»»»»»»»»»»»»»»»“‹
 	root = buff[0];
 	buff.erase(buff.begin());
 	for (int j = 0; j < buff.size(); j++)
@@ -77,13 +79,15 @@ folder *loadsys(string filename)
 			{
 				if (buff[j]->parentfolder == buff[k]->name.name && buff[k]->lvlin == (buff[j]->lvlin - 1))
 				{
-					buff[k]->inner.push_back(buff[j]);
+					buff[k]->inner[0].push_back(buff[j]);
+					buff[j]->parrent = buff[k];
 				}
 			}
 		}
 		else
 		{
-			root->inner.push_back(buff[j]);
+			root->inner[0].push_back(buff[j]);
+			buff[j]->parrent = root;
 		}
 	}
 	cout << "System is loaded!" << endl;
@@ -108,7 +112,13 @@ int main()
 		{
 			cout << "File: ";
 			cin >> command;
-			root = loadsys(command);
+			if (loadsys(command) != nullptr) {
+				root = loadsys(command);
+			}else
+			{
+				cout << "File not founded!" << endl;
+				continue;
+			}
 			break;
 		}
 		if (command == "adduser") 
@@ -120,22 +130,7 @@ int main()
 		cin >> command;
 		cout << "Add user or load system" << endl;
 	}
-	/*while (command != "adduser" || command != "login") {
-		cout << "Login or add user and login please" << endl;
-		cin >> command;
-		if (command == "adduser")
-		{
-			cin >> command;
-			us->adduser(command);
-			break;
-		}
-		if (command == "login")
-		{
-			cin >> command;
-			us->login(command);
-			break;
-		}
-	}*/
+	cout << "Login please" << endl;
 	while (command != "login")
 	{
 		cout << "Login please" << endl;
@@ -144,61 +139,6 @@ int main()
 	cin >> command;
 	us->login(command);
 
-
-	////test
-	//root->mkdir("123",us->loguser);
-	//root->mkdir("folderaa", us->loguser);
-	//root->mkdir("folderbb", us->loguser);
-	//root->mkdir("foldercc", us->loguser);
-	//root->mkdir("999", us->loguser);
-	//root->mkdir("a", us->loguser);
-	//root->mkdir("b", us->loguser);
-	//root->mkdir("c", us->loguser);
-	//root->mkdir("asd", us->loguser);
-	//root->mkdir("se3", us->loguser);
-	//root->mkdir("sad14", us->loguser);
-	//root->mkdir("ftwrrgw", us->loguser);
-	//root->mkdir("ererwr", us->loguser);
-	//root->mkdir("w34", us->loguser);
-	//root->mkdir("t5ys", us->loguser);
-	//root = root->cd("123", us);
-	//root->mkdir("b", us->loguser);
-	//root->mkdir("c", us->loguser);
-	//root->mkdir("asd", us->loguser);
-	//root->mkdir("se3", us->loguser);
-	//root->mkdir("sad14", us->loguser);
-	//root->mkdir("ftwrrgw", us->loguser);
-	//root->mkdir("ererwr", us->loguser);
-	//root->touch("FirstFile", "Abcsdoasdk", us->loguser);
-	//root = root->back();
-	//root = root->cd("999", us);
-	//root->touch("FirstFile", "Abcsdoasdk", us->loguser);
-	//root->touch("2", "Abcsdoa3211232131sdk", us->loguser);
-	//root->touch("asdas", "Abcsdoas123213dk", us->loguser);
-	//root->touch("34", "Abcsdo32432432rere34343434344sffsdfsdasdk", us->loguser);
-	//root->touch("asddq2", "Abc434ddfdfdfsdoasdk", us->loguser);
-	//root->mkdir("w34", us->loguser);
-	//root->mkdir("t5ys", us->loguser);
-	////root = root->cd("123");
-	//root->mkdir("b", us->loguser);
-	//root->mkdir("c", us->loguser);
-	//root->mkdir("asd", us->loguser);
-	//root->mkdir("se3", us->loguser);
-	//root->mkdir("sad14", us->loguser);
-	//root = root->cd("sad14", us);
-	//root->mkdir("b", us->loguser);
-	//root->mkdir("c", us->loguser);
-	//root->mkdir("asd", us->loguser);
-	//root->mkdir("se3", us->loguser);
-	//root = root->back();
-	//root = root->back();
-
-
-	//cout << root;
-	////test
-	
-
-	
 	while (temple != "end")
 	{
 		cin >> temple;
@@ -256,23 +196,8 @@ int main()
 			temple += ".ini";
 			ofstream fout(temple); 
 			fout << root;
-			
 			fout.close();
 		}
-		/*if (temple == "loadsys")
-		{
-			cout << "File name: ";
-			cin >> temple;
-			temple += ".txt";
-			ifstream fin(temple);
-			fin >> temple;
-			cout << temple;
-			fin >> temple;
-			cout << temple;
-			fin >> temple;
-			cout << temple;
-			fin.close();
-		}*/
 		if (temple == "readonly")
 		{
 			cin >> temple;
@@ -295,7 +220,11 @@ int main()
 			cin >> command;
 			us->adduser(command);
 		}
-
+		if (temple == "copy") {
+			cin >> command;
+			cin >> temple;
+			root->copy(command, temple, us);
+		}
 	}
 
 

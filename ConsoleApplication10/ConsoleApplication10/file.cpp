@@ -15,6 +15,15 @@ file::file() {
 	name.pref = ".f";
 	readonly = 0;
 }
+file::file(file *obj, user *us, folder *parent) {
+	this->readonly = obj->readonly;
+	this->name.name = obj->name.name;
+	this->data = obj->data;
+	this->lvlin = obj->lvlin;
+	this->parentuser = us->loguser;
+	this->parrent = parrent;
+	this->parentfolder = parrent->name.name;
+}
 file::file(fullname name, bool readonly, string parentuser, int lvlin, string parentfolder, string data) :folder(name, readonly, parentuser, lvlin, parentfolder) {
 	this->data = data;
 }

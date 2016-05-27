@@ -8,6 +8,7 @@ using namespace std;
 
 folder::folder() //for root-folder only?
 {
+	inner = new vector<folder*>;
 	name.pref = "";
 	parrent = nullptr;
 	readonly = false;
@@ -15,6 +16,7 @@ folder::folder() //for root-folder only?
 	parentuser = "root";
 }
 folder::folder(fullname name, bool readonly, string parentuser, int lvlin, string parentfolder) {
+	inner = new vector<folder*>;
 	this->name = name;
 	this->readonly = readonly;
 	this->parentuser = parentuser;
@@ -22,20 +24,21 @@ folder::folder(fullname name, bool readonly, string parentuser, int lvlin, strin
 	this->parentfolder = parentfolder;
 }
 folder::~folder() {
-	for (int i = 0; i < inner.size(); i++)
+	for (int i = 0; i < inner[0].size(); i++)
 	{
-		delete inner[i];
+		delete inner[0][i];
 	}
 }
 void folder::list() {
-	if (inner.size() == 0)
+	if (inner->size() == 0)
 	{
 		cout << "|" << endl;
 		return;
 	}
-	for (int i = 0; i < inner.size(); i++)
+	for (int i = 0; i < inner[0].size(); i++)
 	{
-		cout << "|" << inner[i]->name.name << inner[i]->name.pref << endl;
+		
+		cout << "|" << inner[0][i]->name.name << inner[0][i]->name.pref << endl;
 	}
 }
 void folder::mkdir(string name, string parentuser) {
@@ -57,7 +60,7 @@ void folder::mkdir(string name, string parentuser) {
 		}
 		temp->lvlin = lvlint;
 
-		inner.push_back(temp);
+		inner[0].push_back(temp);
 		return;
 	}
 		cout << "Name is required" << endl;
@@ -88,15 +91,15 @@ void folder::touch(string name, string data, string parentuser) {
 	}
 	temp->lvlin = lvlint;
 
-	inner.push_back(temp);
+	inner[0].push_back(temp);
 }
 folder* folder::cd(string name, user *us) {
 	if (searchf(name, this) == -1) {
 		cout << "Folder "<< name <<" not founded" << endl;
 		return this;
 	}
-	if ((inner[searchf(name, this)]->parentuser == us->loguser)&&(us->rootaccess!=true)) {
-		return this->inner[searchf(name, this)];
+	if ((inner[0][searchf(name, this)]->parentuser == us->loguser)&&(us->rootaccess!=true)) {
+		return this->inner[0][searchf(name, this)];
 	}
 	else
 	{
@@ -111,18 +114,18 @@ folder* folder::back() {
 void folder::del(fullname name, user *us) {
 	int num = searchf(name, this);
 	if (num == -1)return; //if not founded
-	if ((this->inner[num]->parentuser != us->loguser) && (us->rootaccess != true))
+	if ((this->inner[0][num]->parentuser != us->loguser) && (us->rootaccess != true))
 	{
 		cout << "No access!" << endl;
 		return;
 	}
-	if (this->inner[num]->readonly == true)
+	if (this->inner[0][num]->readonly == true)
 	{
 		cout << "This folder/file is read-only." << endl;
 		return;
 	}
-	if(this->inner[num]->name.pref!= ".link") delete this->inner[num];
-	this->inner.erase(this->inner.begin() + num);
+	if(this->inner[0][num]->name.pref!= ".link") delete this->inner[0][num];
+	this->inner[0].erase(this->inner[0].begin() + num);
 }
 void folder::link(fullname name, string path, user *us) {
 	vector<fullname> tempvect(parsepath(path));
@@ -135,7 +138,7 @@ void folder::link(fullname name, string path, user *us) {
 	for (int k = 0; k < tempvect.size(); k++)			//go to path
 	{
 		if (searchf(tempvect[k], root) == -1) return;
-		root = root->inner[searchf(tempvect[k], root)];
+		root = root->inner[0][searchf(tempvect[k], root)];
 	}
 
 	if ((root->parentuser != us->loguser)&&(us->rootaccess!=true))
@@ -145,21 +148,30 @@ void folder::link(fullname name, string path, user *us) {
 	}
 	
 	if (root->name.pref != "") {
-		cout << "File-link not supported))))" << endl;
-		return;
+		file *temp = new file();
+		file *tempf = (file*)root;
+		temp->parrent = this;
+		temp->name = name;
+		temp->name.pref = ".link";
+		temp->parentuser = us->loguser;
+		temp->data = tempf->data;
+		this->inner[0].push_back(temp);
 	}
-	folder *temp = new folder();
-	temp->parrent = this;
-	temp->inner = root->inner;
-	temp->name = name;
-	temp->name.pref = ".link";
-	temp->parentuser = us->loguser;
-	this->inner.push_back(temp);
+	else
+	{
+		folder *temp = new folder();
+		temp->parrent = this;
+		temp->inner = root->inner;
+		temp->name = name;
+		temp->name.pref = ".link";
+		temp->parentuser = us->loguser;
+		this->inner[0].push_back(temp);
+	}
 
 }
 void folder::open(fullname name, user *us) {
 	if (searchf(name, this) == -1) return;
-	file *temp = (file*)this->inner[searchf(name, this)];
+	file *temp = (file*)this->inner[0][searchf(name, this)];
 	if ((temp->parentuser != us->loguser) && (us->rootaccess != true))
 	{
 		cout << "No access!" << endl;
@@ -176,28 +188,28 @@ void folder::open(fullname name, user *us) {
 	}
 }
 void folder::tree(int tire) {
-	if (inner.size() == 0)
+	if (inner[0].size() == 0)
 	{
 		return;
 	}
-	for (int i = 0; i < this->inner.size(); i++)
+	for (int i = 0; i < this->inner[0].size(); i++)
 	{
 		for (int g = 0; g < tire; g++)
 		{
 			cout << "  ";
 		}
 		
-		cout << "|" << inner[i]->name.name << inner[i]->name.pref << endl;
+		cout << "|" << inner[0][i]->name.name << inner[0][i]->name.pref << endl;
 
-		if (inner[i]->name.pref == "")
+		if (inner[0][i]->name.pref == "")
 		{
-			inner[i]->tree(tire + 1);
+			inner[0][i]->tree(tire + 1);
 		}
 		
 	}
 }
 void folder::readonlyswitch(string name, user *us) {
-	folder *temp = inner[searchf(name, this)];
+	folder *temp = inner[0][searchf(name, this)];
 	if ((temp->parentuser != us->loguser) && (us->rootaccess != true))
 	{
 		cout << "No access!" << endl;
@@ -215,8 +227,44 @@ void folder::readonlyswitch(string name, user *us) {
 	}
 }
 
-void folder::copy(string path_1, string path_2) {
-	vector<fullname> path1(parsepath(path_1));
-	vector<fullname> path2(parsepath(path_2));
+void folder::copy(string path_1, string path_2, user *us) {
+	vector<fullname> path1_names(parsepath(path_1));
+	vector<fullname> path2_names(parsepath(path_2));
 
+	folder *path1 = this;
+	while (path1->parrent != nullptr) {	//go to root
+		path1 = path1->parrent;
+	}
+	for (int k = 0; k < path1_names.size(); k++)			//go to path 1
+	{
+		if (searchf(path1_names[k], path1) == -1) return;
+		path1 = path1->inner[0][searchf(path1_names[k], path1)];
+	}
+
+	folder *path2 = this;
+	while (path2->parrent != nullptr) {	//go to root
+		path2 = path2->parrent;
+	}
+	for (int k = 0; k < path2_names.size(); k++)			//go to path 2
+	{
+		if (searchf(path2_names[k], path2) == -1) return;
+		path2= path2->inner[0][searchf(path2_names[k], path2)];
+	}
+
+	if (path1->name.pref != "") {
+		//copy file
+		file *tempf = (file*)path1;
+		file *temp = new file(tempf, us, path2);
+		path2->inner[0].push_back(temp);
+	}
+	else
+	{
+		folder *temp = new folder(path1->name, path1->readonly, us->loguser, path1->lvlin, path2->name.name);
+		path2->inner[0].push_back(temp);
+		if (path1->inner[0].size() != 0) {
+			for (int i = 0; i < path1->inner[0].size(); i++) {
+				path1->copy(path_1 + "/" + path1->inner[0][i]->name.name + path1->inner[0][i]->name.pref, path_2 + "/" + temp->name.name, us);
+			}
+		}
+	}
 }
