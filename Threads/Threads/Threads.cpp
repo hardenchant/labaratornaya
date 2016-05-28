@@ -12,8 +12,28 @@ using namespace std;
 
 mutex glock;
 
-void func(string str)
+void func1(string str)
 {
+	for (int j = 0; j < 100; j++) {
+		glock.lock();
+		for (int i = 0; i < 4; i++) {
+			cout << str << endl;
+			this_thread::sleep_for(chrono::milliseconds(10));
+		}
+		glock.unlock();
+		this_thread::sleep_for(chrono::milliseconds(10));
+	}
+}
+
+void func2(string str)
+{
+	glock.lock();
+	for (int k = 0; k < 50; k++)
+	{
+		cout << str << endl;
+	}
+	glock.unlock();
+
 	for (int j = 0; j < 100; j++) {
 		glock.lock();
 		for (int i = 0; i < 4; i++) {
@@ -27,12 +47,12 @@ void func(string str)
 
 int main()
 {
-	thread thr1(func, "peace");
-	thread thr2(func, "of");
-	thread thr3(func, "shit");
+	thread thr2(func2, "bbbb");
+	thread thr1(func1, "a");
+
 	thr1.join();
 	thr2.join();
-	thr3.join();
+
     return 0;
 }
 
