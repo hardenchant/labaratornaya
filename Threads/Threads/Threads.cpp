@@ -7,6 +7,7 @@
 #include <string>
 #include <chrono>
 #include <mutex>
+#include <system_error>
 
 using namespace std;
 
@@ -45,13 +46,46 @@ void func2(string str)
 	}
 }
 
+mutex m_deadlock1;											//deadlock demo
+mutex m_deadlock2;
+
+void deadlock1() {
+	
+	m_deadlock1.lock(); //
+	try {
+		m_deadlock1.lock(); // if m_deadlock1 - mutex is locked and get system_error
+	}
+	catch (const system_error &e) {
+		cout << "Err: " << e.code() << endl;
+		cout << "mutex -> recursive_mutex == no this error" << endl;
+	}
+	this_thread::sleep_for(chrono::milliseconds(10));
+	m_deadlock2.lock();
+	cout << "Never come to do 1" << endl;
+
+}
+void deadlock2() {
+	m_deadlock2.lock();
+	this_thread::sleep_for(chrono::milliseconds(10));
+	m_deadlock1.lock();
+	cout << "Never come to do 2" << endl;
+}															//deadlock demo
+
 int main()
 {
-	thread thr2(func2, "bbbb");
-	thread thr1(func1, "a");
+	//thread thr2(func2, "bbbb");
+	//thread thr1(func1, "a");
 
-	thr1.join();
-	thr2.join();
+	thread deadlock1(deadlock1);
+	thread deadlock2(deadlock2);
+
+	//thr1.join();
+	//thr2.join();
+
+	
+	deadlock1.join();			//dealock thread
+	deadlock2.join();			//
+	
 
     return 0;
 }
