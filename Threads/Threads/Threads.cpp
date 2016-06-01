@@ -46,7 +46,7 @@ void func2(string str)
 	}
 }
 
-mutex m_deadlock1;											//deadlock demo
+recursive_mutex m_deadlock1;											//deadlock demo
 mutex m_deadlock2;
 
 void deadlock1() {
@@ -86,6 +86,10 @@ int main()
 	deadlock1.join();			//dealock thread
 	deadlock2.join();			//
 	
+	string command;
+	while (command != "end") {
+		
+	}
 
     return 0;
 }
