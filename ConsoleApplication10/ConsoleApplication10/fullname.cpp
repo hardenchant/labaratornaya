@@ -5,7 +5,9 @@ fullname::fullname() {
 	name = "";
 	pref = "";
 }
+fullname::~fullname() {
 
+}
 fullname::fullname(string fullname) {
 
 	name = "";

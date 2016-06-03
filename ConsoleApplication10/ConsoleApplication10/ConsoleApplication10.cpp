@@ -97,6 +97,7 @@ folder *loadsys(string filename)
 
 int main()
 {
+
 	user *us = new user();
 
 	folder *root = new folder();

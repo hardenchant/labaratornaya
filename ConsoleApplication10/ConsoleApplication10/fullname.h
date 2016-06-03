@@ -9,6 +9,7 @@ public:
 	string pref;
 
 	fullname();
+	~fullname();
 	fullname(string fullname);
 };
 
