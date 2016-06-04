@@ -148,12 +148,22 @@ int main()
 		if (temple == "cd")
 		{
 			cin >> command;
+			try {
 			root = root->cd(command, us);
+			}
+			catch (exception e) {
+				cout << e.what() << endl;
+			}
 		}
 		if (temple == "mkdir")
 		{
 			cin >> command;
-			root->mkdir(command, us->loguser);
+			try { 
+				root->mkdir(command, us->loguser); 
+			}
+			catch (exception e) {
+				cout << e.what() << endl;
+			}
 		}
 
 		if (temple == "touch")
@@ -164,27 +174,54 @@ int main()
 			cin.clear();
 			while (cin.get() != '\n');
 			getline(cin, data);
-			root->touch(command, data, us->loguser);
+			try {
+				root->touch(command, data, us->loguser);
+			}
+			catch (exception e) {
+				cout << e.what() << endl;
+			}
 		}
 		if (temple == "cd.." && root->parrent!=nullptr)
 		{
-			root = root->back();
+			try {
+				root = root->back();
+			}
+			catch (exception e) {
+				cout << e.what() << endl;
+			}
 		}
 		if (temple == "del")
 		{
 			cin >> command;
-			root->del(command, us);
+			try {
+				root->del(command, us);
+			}
+			catch (exception e) {
+				cout << e.what() << endl;
+			}
 		}
 		if (temple == "link")
 		{
 			cin >> command;
 			cin >> temple;
-			root->link(command, temple, us);
+			try {
+				root->link(command, temple, us);
+			}
+			catch (exception e) {
+				cout << e.what() << endl;
+			}
+			
 		}
 		if (temple == "open")
 		{
 			cin >> command;
-			root->open(command, us);
+			try {
+				root->open(command, us);
+			}
+			catch (exception e) {
+				cout << e.what() << endl;
+			}
+			
 		}
 		if (temple == "tree")
 		{
@@ -202,7 +239,12 @@ int main()
 		if (temple == "readonly")
 		{
 			cin >> temple;
-			root->readonlyswitch(temple,us);
+			try {
+				root->readonlyswitch(temple, us);
+			}
+			catch (exception e) {
+				cout << e.what() << endl;
+			}
 		}
 		if (temple == "logout")
 		{
@@ -224,7 +266,12 @@ int main()
 		if (temple == "copy") {
 			cin >> command;
 			cin >> temple;
-			root->copy(command, temple, us);
+			try {
+				root->copy(command, temple, us);
+			}
+			catch (exception e) {
+				cout << e.what() << endl;
+			}
 		}
 	}
 

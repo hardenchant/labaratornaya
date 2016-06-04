@@ -21,15 +21,15 @@ public:
 	folder(fullname name, bool readonly, string parentuser, int lvlin, string parentfolder); //для восстановления из файла
 	~folder();
 	void list(); //show inner
-	void mkdir(string name, string parentuser); //make folder
-	void touch(string name, string data, string parentuser); //make file
+	int mkdir(string name, string parentuser); //make folder
+	int touch(string name, string data, string parentuser); //make file
 	folder* cd(string name, user *us); //return ptr to cd
 	folder* back();
-	void del(fullname name, user *us);
-	void link(fullname name, string path, user *us);
-	void open(fullname name, user *us);
+	int del(fullname name, user *us);
+	int link(fullname name, string path, user *us);
+	int open(fullname name, user *us);
 	void tree(int tire); // tire only 0!
-	void readonlyswitch(string name, user *us);
-	void copy(string path_1, string path_2, user *us);
+	int readonlyswitch(string name, user *us);
+	int copy(string path_1, string path_2, user *us);
 
 };

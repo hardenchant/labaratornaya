@@ -24,6 +24,7 @@ vector<fullname> parsepath(string path) {
 			tempfn = new fullname(tempstr);
 			tempvect.push_back(*tempfn);
 			tempstr = "";
+			delete tempfn;
 		}
 		else
 		{

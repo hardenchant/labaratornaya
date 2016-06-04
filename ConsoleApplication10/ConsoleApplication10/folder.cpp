@@ -41,7 +41,7 @@ void folder::list() {
 		cout << "|" << inner[0][i]->name.name << inner[0][i]->name.pref << endl;
 	}
 }
-void folder::mkdir(string name, string parentuser) {
+int folder::mkdir(string name, string parentuser) {
 	if (searchf(name, this)==-1)
 	{
 		
@@ -61,19 +61,20 @@ void folder::mkdir(string name, string parentuser) {
 		temp->lvlin = lvlint;
 
 		inner[0].push_back(temp);
-		return;
+		return 1;
 	}
-		cout << "Name is required" << endl;
+	throw exception("Name is required!");
+	return 0;
 }
-void folder::touch(string name, string data, string parentuser) {
+int folder::touch(string name, string data, string parentuser) {
 	file *temp = new file();
 	temp->name.name = name;
 
 	if (searchf(temp->name, this) != -1)
 	{
 		delete temp;
-		cout << "Name is required" << endl;
-		return;
+		throw exception("Name is required");
+		return 0;
 	}
 
 	temp->parrent = this;
@@ -92,42 +93,42 @@ void folder::touch(string name, string data, string parentuser) {
 	temp->lvlin = lvlint;
 
 	inner[0].push_back(temp);
+	return 1;
 }
 folder* folder::cd(string name, user *us) {
 	if (searchf(name, this) == -1) {
-		cout << "Folder "<< name <<" not founded" << endl;
-		return this;
+		throw exception("Folder not founded");
 	}
 	if ((inner[0][searchf(name, this)]->parentuser == us->loguser)&&(us->rootaccess!=true)) {
 		return this->inner[0][searchf(name, this)];
 	}
 	else
 	{
-		cout << "No access!" << endl;
-		return this;
+		throw exception("No access");
 	}
 }
 folder* folder::back() {
-	if (this->parrent == nullptr) return this;
+	if (this->parrent == nullptr) {
+		throw exception("Not founded");
+	}
 	return (this->parrent);
 }
-void folder::del(fullname name, user *us) {
+int folder::del(fullname name, user *us) {
 	int num = searchf(name, this);
-	if (num == -1)return; //if not founded
+	if (num == -1) throw exception("Not founded"); //if not founded
 	if ((this->inner[0][num]->parentuser != us->loguser) && (us->rootaccess != true))
 	{
-		cout << "No access!" << endl;
-		return;
+		throw exception("No access");
 	}
 	if (this->inner[0][num]->readonly == true)
 	{
-		cout << "This folder/file is read-only." << endl;
-		return;
+		throw exception("Error. Readonly.");
 	}
 	if(this->inner[0][num]->name.pref!= ".link") delete this->inner[0][num];
 	this->inner[0].erase(this->inner[0].begin() + num);
+	return 1;
 }
-void folder::link(fullname name, string path, user *us) {
+int folder::link(fullname name, string path, user *us) {
 	vector<fullname> tempvect(parsepath(path));
 	folder *root = this;
 	while (root->parrent != nullptr) {	//go to root
@@ -137,14 +138,13 @@ void folder::link(fullname name, string path, user *us) {
 
 	for (int k = 0; k < tempvect.size(); k++)			//go to path
 	{
-		if (searchf(tempvect[k], root) == -1) return;
+		if (searchf(tempvect[k], root) == -1) throw exception("Not found dir");
 		root = root->inner[0][searchf(tempvect[k], root)];
 	}
 
 	if ((root->parentuser != us->loguser)&&(us->rootaccess!=true))
 	{
-		cout << "No access!" << endl;
-		return;
+		throw exception("No access");
 	}
 	
 	if (root->name.pref != "") {
@@ -167,15 +167,14 @@ void folder::link(fullname name, string path, user *us) {
 		temp->parentuser = us->loguser;
 		this->inner[0].push_back(temp);
 	}
-
+	return 1;
 }
-void folder::open(fullname name, user *us) {
-	if (searchf(name, this) == -1) return;
+int folder::open(fullname name, user *us) {
+	if (searchf(name, this) == -1) throw exception("Not found dir");
 	file *temp = (file*)this->inner[0][searchf(name, this)];
 	if ((temp->parentuser != us->loguser) && (us->rootaccess != true))
 	{
-		cout << "No access!" << endl;
-		return;
+		throw exception("No access");
 	}
 	cout << temp->data << endl;
 
@@ -186,6 +185,7 @@ void folder::open(fullname name, user *us) {
 		cout << "Close file, that continue. (Command: ""close"")" << endl;
 		cin >> temps;
 	}
+	return 1;
 }
 void folder::tree(int tire) {
 	if (inner[0].size() == 0)
@@ -208,12 +208,12 @@ void folder::tree(int tire) {
 		
 	}
 }
-void folder::readonlyswitch(string name, user *us) {
+int folder::readonlyswitch(string name, user *us) {
+	if (searchf(name, this) == -1) throw exception("Not found dir");
 	folder *temp = inner[0][searchf(name, this)];
 	if ((temp->parentuser != us->loguser) && (us->rootaccess != true))
 	{
-		cout << "No access!" << endl;
-		return;
+		throw exception("No access");
 	}
 	if (temp->readonly == false)
 	{
@@ -225,9 +225,9 @@ void folder::readonlyswitch(string name, user *us) {
 		temp->readonly = false;
 		cout << temp->name.name << temp->name.pref << " isn't read-only" << endl;
 	}
+	return 1;
 }
-
-void folder::copy(string path_1, string path_2, user *us) {
+int folder::copy(string path_1, string path_2, user *us) {
 	vector<fullname> path1_names(parsepath(path_1));
 	vector<fullname> path2_names(parsepath(path_2));
 
@@ -237,7 +237,7 @@ void folder::copy(string path_1, string path_2, user *us) {
 	}
 	for (int k = 0; k < path1_names.size(); k++)			//go to path 1
 	{
-		if (searchf(path1_names[k], path1) == -1) return;
+		if (searchf(path1_names[k], path1) == -1) throw exception("Not found dir1");
 		path1 = path1->inner[0][searchf(path1_names[k], path1)];
 	}
 
@@ -247,7 +247,7 @@ void folder::copy(string path_1, string path_2, user *us) {
 	}
 	for (int k = 0; k < path2_names.size(); k++)			//go to path 2
 	{
-		if (searchf(path2_names[k], path2) == -1) return;
+		if (searchf(path2_names[k], path2) == -1) throw exception("Not found dir2");
 		path2= path2->inner[0][searchf(path2_names[k], path2)];
 	}
 
@@ -267,4 +267,5 @@ void folder::copy(string path_1, string path_2, user *us) {
 			}
 		}
 	}
+	return 1;
 }
