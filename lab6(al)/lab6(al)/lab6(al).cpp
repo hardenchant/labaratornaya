@@ -26,35 +26,78 @@ private:
 public:
 	int m; //stroki
 	int n; //stolbci
+	matrix<T>(int m, int n);
 	const matrix<T> operator*(const matrix<T>& mat);  //умножение матриц
-	//const matrix<T> operator+(const matrix<T>& mat); //plus
+	const matrix<T> operator+(const matrix<T>& mat); //plus
+	const matrix<T> operator|(const matrix<T>& mat);
+	int set(int m, int n, T set);
 	//const T get(int m, int n);
 	//const matrix<T> rotate();
-	//void print(); //вывод матрицы
-
+	void print(); //вывод матрицы
+	T begin();
+	T end();
+	class itr {
+	private:
+		int mpos;
+		int npos;
+	public:
+		itr() {
+			mpos = 0;
+			npos = 0;
+		}
+		T operator*() {
+			return mat[mpos][npos];
+		}
+		T operator++() {
+			int old_mpos = mpos;
+			int old_npos = npos;
+			if (npos == (n - 1)) {
+				mpos++;
+			}
+			else {
+				npos++;
+			}
+			return mat[old_mpos][old_npos];
+		}
+	};
+	friend itr;
 };
-
+template <class T>
+matrix<T>::matrix(int m, int n) {
+	this->m = m;
+	this->n = n;
+	mat = new T*[m];
+	for (int i = 0; i < m; i++)
+	{
+			mat[i] = new T[n];
+	}
+}
+template <class T>
+int matrix<T>::set(int m, int n, T set) {
+	mat[m-1][n-1] = set;
+	return 1;
+}
 template <class T>
 const matrix<T> matrix<T>::operator*(const matrix<T>& mat)
 {
-	matrix temp = matrix(m, mat.n); // создаем пустую матрицу
-	T temprat; //temprat должен иметь возможность = 0 ))))
-	for (int i = 0; i < m; i++)
+	matrix<T> temp = matrix<T>(m, mat.n); // создаем пустую матрицу
+	T tempvalue; //tempvalue должен иметь возможность = 0 ))))
 	{
+	for (int i = 0; i < m; i++)
 		for (int j = 0; j < mat.n; j++)
 		{
-			temprat = 0; 
+			tempvalue = 0; 
 			for (int k = 0; k < n; k++)
 			{
-				temprat = temprat + (this->mat[i][k] * mat.mat[k][j]);
+				tempvalue = tempvalue + (this->mat[i][k] * mat.mat[k][j]);
 			}
-			temp.mat[i][j] = temprat;
+			temp.mat[i][j] = tempvalue;
 		}
 	}
 	return temp;
 }
 template <class T>
-const matrix<T> matrix::operator+(const matrix<T>& mat)
+const matrix<T> matrix<T>::operator+(const matrix<T>& mat)
 {
 	matrix<T> temp = matrix(m, n);
 	for (int i = 0; i < m; i++)
@@ -62,6 +105,20 @@ const matrix<T> matrix::operator+(const matrix<T>& mat)
 		for (int j = 0; j < n; j++)
 		{
 			temp.mat[i][j] = this->mat[i][j] + mat.mat[i][j];
+		}
+	}
+	return temp;
+}
+template <class T>
+const matrix<T> matrix<T>::operator|(const matrix<T>& mat)
+{
+	matrix<T> temp(m, n + mat.n);
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			temp.mat[i][j] = this->mat[i][j];
+		}
+		for (int k = n; k < (n + mat.n); k++) {
+			temp.mat[i][k] = mat.mat[i][k - n];
 		}
 	}
 	return temp;
@@ -99,10 +156,16 @@ const matrix<T> matrix::operator+(const matrix<T>& mat)
 //	}
 //}
 //
-//void rational::print()
-//{
-//	std::cout << m << "/" << n;
-//}
+template <class T>
+void matrix<T>::print()
+{
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			cout << mat[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
 //rational::rational() {
 //
 //}
@@ -154,11 +217,63 @@ const matrix<T> matrix::operator+(const matrix<T>& mat)
 //	rational temp = rational(m*b + r.m*a, nod*a*b);
 //	return temp;
 //}
+template <class T>
+T matrix<T>::begin() {
+	return mat[0][0];
+}
+template <class T>
+T matrix<T>::end() {
+	return mat[m - 1][n - 1];
+}
+//template <class T>
+//class matrix<T>::itr{
+//private:
+//	int mpos;
+//	int npos;
+//public:
+//	itr() {
+//		mpos = 0;
+//		npos = 0;
+//	}
+//	T operator*() {
+//		return mat[mpos][npos];
+//	}
+//	T operator++() {
+//		int old_mpos = mpos;
+//		int old_npos = npos;
+//		if (npos == (n - 1)) {
+//			mpos++;
+//		}
+//		else {
+//			npos++;
+//		}
+//		return mat[old_mpos][old_npos];
+//	}
+//}
 
 int main()
 {
 	//srand(time(0));
+	matrix<int> mmm(2, 2);
+	matrix<int> nnn(2, 2);
+	matrix<int>::itr sss;
+	mmm.set(1, 1, 1);
+	mmm.set(1, 2, 2);
+	mmm.set(2, 1, 3);
+	mmm.set(2, 2, 4);
+	nnn.set(1, 1, 1);
+	nnn.set(1, 2, 2);
+	nnn.set(2, 1, 3);
+	nnn.set(2, 2, 4);
+	mmm = mmm * nnn;
+	mmm.print();
+	nnn.print();
+	mmm = mmm | nnn;
+	mmm.print();
 
+	for (matrix<int>::itr iterator; *iterator != mmm.end(); ++iterator) {
+		cout << *iterator << endl;
+	}
 
 	//	matrix<rational> mrrr; - конструктор по умолчанию тоже должен быть
 	//= matrix(3, 3);
